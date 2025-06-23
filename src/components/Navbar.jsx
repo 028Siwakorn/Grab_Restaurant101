@@ -4,7 +4,7 @@ const Navbar = () => {
     const menuItems = [
     {
         name:"Add Restaurant",
-        url:"/"
+        url:""
     },
     {
         name:"Search",
