@@ -1,5 +1,5 @@
 import React from "react";
-
+//card
 const Card = (props) => {
   return (
     <div className="card bg-base-100 w-96 shadow-sm">
