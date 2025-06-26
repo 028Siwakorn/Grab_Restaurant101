@@ -1,11 +1,27 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
 import Restaurant from "../components/Restaurants";
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
+  // const [keyword, setKeyword] = useState("");
+  const [filteredRestaurants, setFilteredRestaurants] = useState([]);
+
+  const handleSearch = (keyword) => {
+    if (keyword === "") {
+      setFilteredRestaurants(restaurants);
+      return;
+    }
+    const result = restaurants.filter((restaurant) => {
+      return (
+        restaurant.title.toLowerCase().includes(keyword.toLowerCase()) ||
+        restaurant.type.toLowerCase().includes(keyword.toLowerCase())
+      );
+    });
+    setFilteredRestaurants(result);
+    // console.log(result);
+  };
   useEffect(() => {
     //call api: getAllRestaurants
-    fetch("http://localhost:3000/restaurants")
+    fetch("http://localhost:5000/restaurants")
       .then((res) => {
         //convert to JSON format
         return res.json();
@@ -13,6 +29,7 @@ const Home = () => {
       //save to state
       .then((response) => {
         setRestaurants(response);
+        setFilteredRestaurants(response);
       })
       //catch error !!!
       .catch((err) => {
@@ -24,7 +41,6 @@ const Home = () => {
       {
         //Navigation Bar
       }
-      <Navbar />
       {
         //Header
       }
@@ -54,12 +70,18 @@ const Home = () => {
               <path d="m21 21-4.3-4.3"></path>
             </g>
           </svg>
-          <input type="search" required placeholder="Search" />
+          <input
+            type="search"
+            name="keyword"
+            onChange={(e) => handleSearch(e.target.value)}
+            required
+            placeholder="Search"
+          />
         </label>
       </div>
-      <Restaurant restaurants={restaurants} />
+      <Restaurant restaurants={filteredRestaurants} />
     </div>
   );
-};
+}
 
 export default Home;

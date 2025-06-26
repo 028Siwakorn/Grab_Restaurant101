@@ -1,23 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router";
 
-const AddRestaurant = () => {
+const UpdateRestaurant = () => {
+  //1. Get Id from URL
+  const { id } = useParams();
   const [restaurant, setRestaurants] = useState({
     title: "",
     type: "",
     img: "",
   });
+
+  //2. Get Restaurant by ID
+  useEffect(() => {
+    fetch("http://localhost:5000/restaurants/" + id)
+      .then((res) => {
+        //convert to JSON format
+        return res.json();
+      })
+      //save to state
+      .then((response) => {
+        setRestaurants(response);
+      })
+      //catch error !!!
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, [id]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setRestaurants({ ...restaurant, [name]: value });
   };
   const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:5000/restaurants/", {
-        method: "POST",
+      const response = await fetch("http://localhost:5000/restaurants/" + id, {
+        method: "PUT",
         body: JSON.stringify(restaurant),
       });
       if (response.ok) {
-        alert("Restaurant added to successfully!");
+        alert("Restaurant had been update!!");
         setRestaurants({
           title: "",
           type: "",
@@ -30,7 +51,7 @@ const AddRestaurant = () => {
   };
   return (
     <div className="container mx-auto flex items-center flex-col">
-      <h1 className="text-2xl mt-3">Add New Restaurant</h1>
+      <h1 className="text-2xl mt-3">Update Your Restaurant</h1>
       <div className="mt-2">
         <legend className="mt-2">What is your restaurant title?</legend>
         <input
@@ -75,17 +96,15 @@ const AddRestaurant = () => {
         </div>
       )}
       <div className="mt-3 space-x-2">
-        <a
-          href="/"
-          onClick={handleSubmit}
-          className="btn btn-soft btn-success "
-        >
-          Add
+        <button onClick={handleSubmit} className="btn btn-soft btn-success ">
+          Update
+        </button>
+        <a href="/" className="btn btn-soft btn-error">
+          Cancel
         </a>
-        <button className="btn btn-soft btn-error">Cancel</button>
       </div>
     </div>
   );
 };
 
-export default AddRestaurant;
+export default UpdateRestaurant;
